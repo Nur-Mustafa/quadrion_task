@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Form, Offcanvas } from 'react-bootstrap';
 
 const EditButton = ({item}) => {
@@ -9,6 +9,8 @@ const EditButton = ({item}) => {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+
+ 
   const [userName, userNameChange] = useState(item?.userName);
   const [firstName, firstNameChange] = useState(item?.firstName);
   const [lastName, lastNameChange] = useState(item?.lastName);
@@ -16,11 +18,12 @@ const EditButton = ({item}) => {
   const [contact, contactChange] = useState(item?.contact);
   const [status, statusChange] = useState(item?.status);
 
+ //update information
   const handleSubmit = (e) => {
     e.preventDefault();
     const userInfo = { userName, firstName, lastName, email, contact, status };
-    fetch("http://localhost:8000/users", {
-      method: "POST",
+    fetch("http://localhost:3030/users/"+item.id, {
+      method: "PUT",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(userInfo),
     })
@@ -46,7 +49,7 @@ const EditButton = ({item}) => {
         <Offcanvas.Body>
         <Form onSubmit={handleSubmit}>
             <label>User Name</label>
-            <input readOnly
+            <input readOnly disabled
               value={userName}
               onChange={(e) => userNameChange(e.target.value)}
               type="text"
@@ -73,7 +76,7 @@ const EditButton = ({item}) => {
               required
             />
             <label>Email</label>
-            <input readOnly
+            <input readOnly disabled
               value={email}
               onChange={(e) => emailChange(e.target.value)}
               type="email"
@@ -100,8 +103,8 @@ const EditButton = ({item}) => {
               <option value='Waiting'>Waiting</option>
             </select>
 
-            <Button variant="primary" type="submit">
-              Save
+            <Button variant="success" type="submit">
+              Update
             </Button>
           </Form>
         </Offcanvas.Body>

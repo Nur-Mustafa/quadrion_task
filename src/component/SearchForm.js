@@ -1,56 +1,80 @@
-import React, { useState } from 'react';
-import { Button } from 'react-bootstrap';
+import React, { useState } from "react";
+import { Button } from "react-bootstrap";
 
-const SearchForm = ({setSearch}) => {
-    // search
-  const [searchUserName, setSearchUserName] = useState('');
-  const [searchEmail, setSearchEmail] = useState('');
-  const [searchStatus, setSearchStatus] = useState('');
 
+const SearchForm = ({setUserData }) => {
+  
+  // search state
+
+  const [value, setValue] = useState("");
+
+  //sort state
+  const [sortValue, setSortValue] = useState("");
+
+  const sortOption = ["userName", "email", "status"];
+
+
+  // search handle function
   const searchHandle = (event) => {
     event.preventDefault();
-    setSearch({
-      userName: searchUserName,
-      email: searchEmail,
-      status: searchStatus,
-    })
+   fetch(`http://localhost:3030/users?q=${value}`)
+   .then((res)=>res.json())
+      .then((data) => {
+        setUserData(data);
+        setValue("");
+      })
+      .catch((err) => console.log(err.message));
   };
-    return (
-        <div>
-             <form onSubmit={searchHandle} className=" d-flex flex-column flex-lg-row">
+
+  //----sort data function
+  const handleSort = (e) => {
+    let value=e.target.value;
+    setSortValue(value)
+   fetch(`http://localhost:3030/users?_sort=${value}&_order=asc`)
+   .then((res)=>res.json())
+      .then((data) => {
+        setUserData(data);
+      })
+      .catch((err) => console.log(err.message));
+  };
+
+  return (
+    <div className="border p-4 my-4 bg-secondary bg-opacity-25 d-flex flex-column justify-content-md-between  justify-content-lg-evenly flex-lg-row">
+      <form onSubmit={searchHandle} className="d-flex flex-lg-row">
         <input
-          value={searchUserName}
-          onChange={(e) => setSearchUserName(e.target.value)}
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
           type="text"
-          name='userName'
+          
           placeholder="User Name"
           className="m-2 form-control"
         />
-        <input
-          value={searchEmail}
-          onChange={(e) => setSearchEmail( e.target.value)}
-          type="email"
-          name='email'
-          placeholder="Email"
-          className="form-control m-2 "
-        />
-        <select
-        name='status'
-          value={searchStatus} 
-          onChange={(e) => setSearchStatus(e.target.value)}
-          className="form-control m-2"
-        >
-          <option defaultValue>Status</option>
-          <option value="Confirmed">Confirmed</option>
-          <option value="Waiting">Waiting</option>
-        </select>
-        
-        <Button variant="outline-warning" className="m-2" type="submit">
+       
+        <Button variant="outline-primary" className="m-2" type="submit">
           Search
         </Button>{" "}
-</form> 
-        </div>
-    );
+      </form>
+
+       {/* -------sort ----- */}
+
+       <div className="d-flex flex-row">
+        <h5 className="me-2">Sort by: </h5>
+        <select
+        
+          style={{  borderRadius: "2px", height: "35px" }}
+          onChange={handleSort}
+          value={sortValue}
+        >
+          <option>Select option</option>
+          {sortOption.map((option, index) => (
+            <option value={option} key={index}>
+              {option}
+            </option>
+          ))}
+        </select>
+      </div>
+    </div>
+  );
 };
 
 export default SearchForm;
