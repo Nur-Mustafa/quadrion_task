@@ -1,4 +1,6 @@
 # This is an Employee information website
+_Live site_ [https://capable-faloodeh-7d05b9.netlify.app/]
+[Github repo](https://github.com/Nur-Mustafa/quadrion_task)
 
 Description
 ***
